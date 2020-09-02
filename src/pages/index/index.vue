@@ -17,7 +17,22 @@
             <i class="el-icon-menu"></i>
             <span slot="title">首页</span>
           </el-menu-item>
-          <el-submenu index="1">
+          <div v-for="item in info.menus" :key="item.id">
+            <!-- 这个是目录 -->
+            <el-submenu v-if="item.children" :index="item.id+''">
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span>{{item.title}}</span>
+              </template>
+              <el-menu-item-group>
+                <el-menu-item :index="i.url" v-for="i in item.children" :key="i.id">{{i.title}}</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+
+            <!-- 这个直接是菜单 -->
+            <el-menu-item v-else :index="item.url">{{item.title}}</el-menu-item>
+          </div>
+          <!-- <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>系统设置</span>
@@ -41,7 +56,7 @@
               <el-menu-item index="/banner">轮播图管理</el-menu-item>
               <el-menu-item index="/seckill">秒杀活动</el-menu-item>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu>-->
         </el-menu>
       </el-aside>
       <el-container>
@@ -66,12 +81,28 @@
   </div>
 </template>
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
+  computed: {
+    ...mapGetters({
+      info: "user/info",
+    }),
+  },
   components: {},
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    ...mapActions({
+      ...mapActions({
+        changeInfoAction: "user/changeInfoAction",
+      }),
+      logout() {
+        this.changeInfoAction({});
+        this.$router.push("/login");
+      },
+    }),
+  },
   mounted() {},
 };
 </script>
@@ -92,5 +123,21 @@ export default {
   font-size: 25px;
   line-height: 60px;
   color: #fff;
+}
+.view {
+  padding-top: 30px;
+}
+.con-box {
+  float: right;
+}
+.name {
+  line-height: 60px;
+  color: #ffffff;
+  float: left;
+  margin-right: 20px;
+}
+.btn {
+  float: left;
+  margin-top: 10px;
 }
 </style>
