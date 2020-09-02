@@ -27,7 +27,7 @@ export default {
     vAdd,
     vList
   },
-  methods: {
+  methods: { 
     // 弹框消失
     hide() {
       this.info.isShow = false;

@@ -25,7 +25,7 @@
               :value="item.id"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> 
 
         <el-form-item label="商品名称" :label-width="width">
           <el-input v-model="form.goodsname" autocomplete="off"></el-input>
@@ -149,6 +149,8 @@ export default {
       reqSpecList: "spec/reqListAction",
       //获取分类列表
       reqList: "goods/reqListAction",
+      //获取一下总数
+      reqtotal: "goods/reqListNum",
     }),
     //当一级分类修改的时候
     changeFirstId() {
@@ -214,6 +216,7 @@ export default {
           this.empty();
           //重置list
           this.reqList();
+          this.reqtotal()
         } else {
           warningAlert(res.data.msg);
         }
@@ -278,7 +281,7 @@ export default {
     //如果没有分类就请求
     if (this.cateList.length == 0) {
       this.reqCateList();
-    }
+    } 
     //请求全部的规格
     this.reqSpecList(true);
   },

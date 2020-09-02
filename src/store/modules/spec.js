@@ -27,7 +27,7 @@ const mutations = {
     state.page = page
   }
 }
-
+ 
 const actions = {
   reqListAction(context, bool) {
     let params = bool ? {} : {

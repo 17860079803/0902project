@@ -40,6 +40,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      :page-size="size"
+      layout="prev, pager, next"
+      :total="total"
+      :current-page="page"
+      @current-change="changeCurrentPage"
+    ></el-pagination>
   </div>
 </template>
 <script>
@@ -51,6 +58,9 @@ export default {
   computed: {
     ...mapGetters({
       list: "goods/list",
+      size: "goods/size",
+      total: "goods/total",
+      page: "goods/page",
     }),
   },
   data() {
@@ -59,6 +69,8 @@ export default {
   methods: {
     ...mapActions({
       reqList: "goods/reqListAction",
+      reqtotal: "goods/reqListNum",
+      changePageAction: "goods/changePageAction",
     }),
     //点击了编辑按钮
     edit(id) {
@@ -70,16 +82,24 @@ export default {
       reqgoodsDel({ id: id }).then((res) => {
         if (res.data.code == 200) {
           successAlert("删除成功");
-          this.reqList();
+          this.reqtotal();
+          //页码设置成第一页
+          this.changePageAction(1);
         } else {
           warningAlert(res.data.msg);
         }
       });
     },
+    //修改当前页码
+    changeCurrentPage(p) {
+      //修改vuex里面的页码
+      this.changePageAction(p);
+    },
   },
   mounted() {
     //一进来 走请求
     this.reqList();
+    this.reqtotal();
   },
 };
 </script>

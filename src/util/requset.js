@@ -1,14 +1,34 @@
 import axios from "axios"
 import qs from "qs"
-import Axios from "axios";
+import store from "../store"
+import router from "../router"
+import {
+  warningAlert
+} from "./alert"
 
 let baseUrl = "/api";
+//请求拦截
+axios.interceptors.request.use(config => {
+  //登录
+  if (config.url == baseUrl + "/api/userlogin") {
+    return config;
+  }
 
+  config.headers.authorization = store.state.user.info.token;
+  return config;
+})
 //响应拦截
 axios.interceptors.response.use(res => {
   console.group("====本次请求的地址是：" + res.config.url + "======");
   console.log(res);
   console.groupEnd()
+  if (res.data.msg === "登录已过期或访问权限受限") {
+    warningAlert("登录已过期或访问权限受限")
+    //清空info
+    store.dispatch("user/changeInfoAction", {})
+    //跳转到登录 
+    router.push("/login")
+  }
   return res;
 })
 
@@ -430,3 +450,51 @@ export const reqgoodsNum = () => {
   })
 }
 /*---------------------商品结束----------------------------------*/
+
+//-------------------限时秒杀管理---------------------
+
+//限时秒杀添加
+export const reqAddseck = (form) => {
+  return axios({
+    url: baseUrl + "/api/seckadd",
+    method: "post",
+    data: qs.stringify(form)
+  })
+}
+
+//限时秒杀列表
+export const reqseckList = (params) => {
+  return axios({
+    url: baseUrl + "/api/secklist",
+    method: "get",
+    params: params
+  })
+}
+
+//限时秒杀详情
+export const reqseckDetail = (params) => {
+  return axios({
+    url: baseUrl + "/api/seckinfo",
+    method: "get",
+    params: params
+  })
+}
+
+//限时秒杀修改
+export const reqseckUpdate = (form) => {
+  return axios({
+    url: baseUrl + "/api/seckedit",
+    method: "post",
+    data: qs.stringify(form)
+  })
+}
+
+
+//限时秒杀删除 params={id:1}
+export const reqseckDel = (params) => {
+  return axios({
+    url: baseUrl + "/api/seckdelete",
+    method: "post",
+    data: qs.stringify(params)
+  })
+}

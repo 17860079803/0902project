@@ -1,8 +1,12 @@
 <template>
   <div>
-    <el-dialog :title="info.title" :visible.sync="info.isShow" @closed="close" @opened="showFile=true">
-      <el-form :model="form">
-        
+    <el-dialog
+      :title="info.title"
+      :visible.sync="info.isShow"
+      @closed="close"
+      @opened="showFile=true"
+    >
+      <el-form :model="form" :rules="rules">
         <el-form-item label="标题" :label-width="width">
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
@@ -47,13 +51,26 @@ export default {
   },
   data() {
     return {
-      showFile:true,
+      showFile: true,
       imgUrl: "",
       width: "100px",
       form: {
         title: "",
         img: null,
         status: 1,
+      },
+      //规则
+      rules: {
+        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 24,
+            message: "长度在 6 到 24 个字符",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
@@ -72,7 +89,7 @@ export default {
       }
 
       //图片类型
-      let imgTypeArr = [".jpg", ".jpeg", ".png", ".gif","WEBP"];
+      let imgTypeArr = [".jpg", ".jpeg", ".png", ".gif", "WEBP"];
       //获取到后缀名
       var extname = file.name.slice(file.name.lastIndexOf("."));
       //判断文件格式是否正确
@@ -94,7 +111,7 @@ export default {
     },
     //弹框关闭完成
     close() {
-      this.showFile=false;
+      this.showFile = false;
       // 如果是编辑，取消了，就要清空
       if (!this.info.isAdd) {
         this.empty();
@@ -119,19 +136,19 @@ export default {
     },
     //清空提交后输入from的数据
     empty() {
-      this.form ={
+      this.form = {
         title: "",
         img: null,
         status: 1,
-      }
-      this.imgUrl=""
+      };
+      this.imgUrl = "";
     },
     //查看一条数据
     look(id) {
       reqbannerDetail({ id: id }).then((res) => {
         this.form = res.data.list;
         this.form.id = id;
-        this.imgUrl=this.$preImg+ res.data.list.img
+        this.imgUrl = this.$preImg + res.data.list.img;
       });
     },
     //点击了修改

@@ -6,7 +6,7 @@ const state = {
   //管理员列表
   list: [],
   //一页的条数
-  size: 20,
+  size: 2,
   //管理员总数
   total: 0,
 
@@ -31,11 +31,12 @@ const mutations = {
 
 const actions = {
   //请求
-  reqListAction(context) {
-    reqgoodsList({
+  reqListAction(context, bool) {
+    let params = bool ? {} : {
       page: context.state.page,
       size: context.state.size
-    }).then(res => {
+    }
+    reqgoodsList(params).then(res => {
       let arr = res.data.list ? res.data.list : []
       context.commit("changeList", arr)
     })

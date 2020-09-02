@@ -2,8 +2,14 @@
   <div class="login">
     <div class="con">
       <h3>登录</h3>
-      <el-input v-model="user.username" placeholder="输入账号" clearable></el-input>
-      <el-input v-model="user.password" placeholder="输入密码" clearable show-password></el-input>
+      <el-form :model="user" :rules="rules">
+        <el-form-item prop="username">
+          <el-input v-model="user.username" placeholder="输入账号" clearable></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="user.password" placeholder="输入密码" clearable show-password></el-input>
+        </el-form-item>
+      </el-form>
       <div class="btn-box">
         <el-button type="primary" @click="login">登录</el-button>
       </div>
@@ -15,7 +21,7 @@
 import { reqLogin } from "../../util/requset";
 //引入封装好的弹框
 import { successAlert, warningAlert } from "../../util/alert";
-import {mapActions} from "vuex"
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -23,12 +29,25 @@ export default {
         username: "",
         password: "",
       },
+      //规则
+      rules: {
+        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 24,
+            message: "长度在 6 到 24 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   components: {},
   methods: {
     ...mapActions({
-     changeInfoAction:"user/changeInfoAction"
+      changeInfoAction: "user/changeInfoAction",
     }),
     login() {
       reqLogin(this.user).then((res) => {

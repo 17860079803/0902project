@@ -27,7 +27,7 @@
           <v-del @confirm="del(scope.row.id)"></v-del>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> 
     <el-pagination
       :page-size="size"
       layout="prev, pager, next"

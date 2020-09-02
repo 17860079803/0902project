@@ -21,7 +21,7 @@ export default {
         title: "添加商品",
         isAdd: true,
       },
-    };
+    }; 
   },
   components: {
     vAdd,
