@@ -13,15 +13,15 @@ axios.interceptors.request.use(config => {
   if (config.url == baseUrl + "/api/userlogin") {
     return config;
   }
-
+  console.log(config);
   config.headers.authorization = store.state.user.info.token;
   return config;
 })
 //响应拦截
 axios.interceptors.response.use(res => {
-  // console.group("====本次请求的地址是：" + res.config.url + "======");
-  // console.log(res);
-  // console.groupEnd()
+  console.group("====本次请求的地址是：" + res.config.url + "======");
+  console.log(res);
+  console.groupEnd()
   if (res.data.msg === "登录已过期或访问权限受限") {
     warningAlert("登录已过期或访问权限受限")
     //清空info
@@ -261,7 +261,7 @@ export const reqcateUpdate = (form) => {
   return axios({
     url: baseUrl + "/api/cateedit",
     method: "post",
-    data: qs.stringify(form)
+    data: data
   })
 }
 
@@ -373,7 +373,7 @@ export const reqbannerUpdate = (form) => {
   return axios({
     url: baseUrl + "/api/banneredit",
     method: "post",
-    data: qs.stringify(form)
+    data: data
   })
 }
 

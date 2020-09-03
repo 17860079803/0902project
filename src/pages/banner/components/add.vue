@@ -26,7 +26,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel" v-preventReClick>取 消</el-button>
         <el-button type="primary" @click="add" v-if="info.isAdd" v-preventReClick>添 加</el-button>
-        <el-button type="primary" @click="update" v-else v-preventReClick>修 改</el-button>
+        <el-button type="primary" @click="update" v-else>修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -151,6 +151,7 @@ export default {
     },
     //点击了修改
     update() {
+      console.log(this.form);
       reqbannerUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert("更新成功");

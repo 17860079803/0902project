@@ -148,6 +148,7 @@ export default {
     },
     //点击了修改
     update() {
+      console.log(111);
       reqcateUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert("更新成功");

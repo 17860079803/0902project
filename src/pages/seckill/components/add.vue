@@ -158,6 +158,7 @@ export default {
       // 如果是编辑，取消了，就要清空
       if (!this.info.isAdd) {
         this.empty();
+        this.timer = null
       }
     },
     //添加菜单
