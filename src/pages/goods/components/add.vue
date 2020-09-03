@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="info.title" :visible.sync="info.isShow" @closed="close">
+    <el-dialog :title="info.title" :visible.sync="info.isShow" @closed="close" @opened="createEditor">
       <el-form :model="form" :rules="rules">
         <!-- 一级分类 -->
         <el-form-item label="一级分类" :label-width="width" prop="first_cateid">
@@ -58,7 +58,7 @@
         </el-form-item>
         <!-- 商品属性 -->
         <el-form-item label="商品属性" :label-width="width" prop="specsattr">
-          <el-select v-model="form.specsattr" placeholder="请选择商品规格属性">
+          <el-select v-model="form.specsattr" placeholder="请选择商品规格属性" multiple>
             <el-option label="--请选择--" value></el-option>
             <el-option v-for="item in attrList" :key="item" :label="item" :value="item"></el-option>
           </el-select>
@@ -78,8 +78,7 @@
         </el-form-item>
         <el-form-item label="商品描述" :label-width="width" prop="description">
           <!-- 富文本编辑器的节点 -->
-          <!-- <div id="editor" v-if="info.isShow"></div> -->
-          <el-input type="textarea" v-model="form.description"></el-input>
+          <div id="editor" v-if="info.isShow"></div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -104,6 +103,8 @@ import {
 import { successAlert, warningAlert } from "../../../util/alert";
 //引入vuex辅助函数
 import { mapGetters, mapActions } from "vuex";
+//引入富文本编辑器
+import E from "wangeditor";
 export default {
   props: ["info"],
   computed: {
@@ -164,6 +165,14 @@ export default {
   },
   components: {},
   methods: {
+    //富文本编辑器
+    createEditor() {
+      //创建编辑器
+      this.editor = new E("#editor");
+      this.editor.create();
+      //给富文本编辑器赋值
+      this.editor.txt.html(this.form.description);
+    },
     ...mapActions({
       //获取分类列表
       reqCateList: "cate/reqListAction",
@@ -248,6 +257,8 @@ export default {
         warningAlert("请填写必填项,*为必填项");
         return;
       }
+      //取出富文本编辑器的内容，赋值给form的description
+      this.form.description = this.editor.txt.html();
       reqgoodsAdd(this.form).then((res) => {
         if (res.data.code === 200) {
           //添加成功
@@ -306,6 +317,8 @@ export default {
     },
     //点击了修改
     update() {
+      //取出富文本编辑器的内容，赋值给form的description
+      this.form.description = this.editor.txt.html();
       reqgoodsUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert("更新成功");

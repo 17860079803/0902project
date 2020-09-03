@@ -19,9 +19,9 @@ axios.interceptors.request.use(config => {
 })
 //响应拦截
 axios.interceptors.response.use(res => {
-  console.group("====本次请求的地址是：" + res.config.url + "======");
-  console.log(res);
-  console.groupEnd()
+  // console.group("====本次请求的地址是：" + res.config.url + "======");
+  // console.log(res);
+  // console.groupEnd()
   if (res.data.msg === "登录已过期或访问权限受限") {
     warningAlert("登录已过期或访问权限受限")
     //清空info

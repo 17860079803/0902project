@@ -48,7 +48,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel" v-preventReClick >取 消</el-button>
+        <el-button @click="cancel" v-preventReClick>取 消</el-button>
         <el-button type="primary" @click="add" v-if="info.isAdd" v-preventReClick>添 加</el-button>
         <el-button type="primary" @click="update" v-else v-preventReClick>修 改</el-button>
       </div>
@@ -122,8 +122,12 @@ export default {
         warningAlert("请填写菜单名称");
         return;
       }
-      if (this.form.url == "" || this.form.icon == "") {
-        warningAlert("请选择菜单地址或菜单图标");
+      if (this.form.type == 1 && this.form.icon == "") {
+        warningAlert("请选择菜单图标");
+        return;
+      }
+      if (this.form.type == 2 && this.form.url == "") {
+        warningAlert("请选择菜单地址");
         return;
       }
       if (this.form.pid == "") {

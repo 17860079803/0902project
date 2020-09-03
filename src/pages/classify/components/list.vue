@@ -12,9 +12,9 @@
       <el-table-column prop="catename" label="分类名称" sortable width="180"></el-table-column>
       <el-table-column label="分类图片">
         <template slot-scope="scope">
-          <img :src="$preImg+scope.row.img" alt />
+          <img v-if="scope.row.img!='null'" :src="$preImg+scope.row.img" alt />
         </template>
-      </el-table-column>
+      </el-table-column>  
       <el-table-column label="状态">
         <template slot-scope="scope">
           <el-button type="primary" v-if="scope.row.status==1">启用</el-button>

@@ -50,16 +50,16 @@
               :label="item.goodsname"
               :value="item.id"
             ></el-option>
-          </el-select>
+          </el-select> 
         </el-form-item>
         <el-form-item label="状态" :label-width="width">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="2"></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" @click="update" v-else>修 改</el-button>
+        <el-button @click="cancel" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="add" v-if="info.isAdd" v-preventReClick>添 加</el-button>
+        <el-button type="primary" @click="update" v-else v-preventReClick>修 改</el-button>
       </div>
     </el-dialog>
   </div>
