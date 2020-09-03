@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.isShow" @closed="close">
-      <el-form :model="form">
+      <el-form :model="form" :rules="rules">
         <!-- 选择所属角色 -->
-        <el-form-item label="所属角色" :label-width="width">
+        <el-form-item label="所属角色" :label-width="width" prop="roleid">
           <el-select v-model="form.roleid">
             <el-option value label="--请选择--" disabled></el-option>
             <el-option
@@ -12,14 +12,14 @@
               :label="item.rolename"
               :value="item.id"
             ></el-option>
-          </el-select> 
+          </el-select>
         </el-form-item>
         <!-- 用户名 -->
-        <el-form-item label="用户名称" :label-width="width">
+        <el-form-item label="用户名称" :label-width="width" prop="username">
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 设置密码 -->
-        <el-form-item label="密码" :label-width="width">
+        <el-form-item label="密码" :label-width="width" prop="password">
           <el-input v-model="form.password" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 选择角色状态 -->
@@ -29,9 +29,9 @@
       </el-form>
       <!-- 底部按钮 -->
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" @click="update" v-else>修 改</el-button>
+        <el-button @click="cancel" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="add" v-if="info.isAdd" v-preventReClick>添 加</el-button>
+        <el-button type="primary" @click="update" v-else v-preventReClick>修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -63,6 +63,14 @@ export default {
         password: "",
         status: 1,
       },
+      //规则
+      rules: {
+        roleid: [{ required: true, message: "请选择角色", trigger: "blur" }],
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+      },
     };
   },
   components: {},
@@ -92,6 +100,18 @@ export default {
       //重置树形控件
     },
     add() {
+      // 表单验证
+      if (
+        !this.form.username &&
+        !this.form.password 
+      ) {
+        warningAlert("请填写必填项,*为必填项");
+        return;
+      };
+      if(this.form.roleid==''){
+         warningAlert("请填写必填项,*为必填项");
+        return;
+      }
       reqUserAdd(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert("添加成功");

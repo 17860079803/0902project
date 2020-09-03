@@ -1,11 +1,11 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.isShow" @closed="close">
-      <el-form :model="form">
-        <el-form-item label="活动名称" :label-width="width">
+      <el-form :model="form" :rules="rules">
+        <el-form-item label="活动名称" :label-width="width" prop="title">
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="选择时间" :label-width="width">
+        <el-form-item label="选择时间" :label-width="width" prop="timer">
           <div class="block">
             <!-- <span class="demonstration">起始日期时刻为 12:00:00</span> -->
             <el-date-picker
@@ -17,7 +17,7 @@
           </div>
         </el-form-item>
         <!-- 一级分类 -->
-        <el-form-item label="一级分类" :label-width="width">
+        <el-form-item label="一级分类" :label-width="width" prop="first_cateid">
           <el-select v-model="form.first_cateid" placeholder="请选择商品一级分类" @change="changeFirstId">
             <el-option label="--请选择--" value></el-option>
             <el-option
@@ -29,7 +29,7 @@
           </el-select>
         </el-form-item>
         <!-- 二级分类-->
-        <el-form-item label="二级分类" :label-width="width">
+        <el-form-item label="二级分类" :label-width="width" prop="second_cateid">
           <el-select v-model="form.second_cateid" placeholder="请选择商品二级分类" @change="changeSecondId">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -41,7 +41,7 @@
           </el-select>
         </el-form-item>
         <!-- 选择商品 -->
-        <el-form-item label="选择商品" :label-width="width">
+        <el-form-item label="选择商品" :label-width="width" prop="goodsid">
           <el-select v-model="form.goodsid" placeholder="请选择商品">
             <el-option label="--请选择--" value></el-option>
             <el-option
@@ -96,7 +96,7 @@ export default {
       goodsattr: [],
       //label宽度
       width: "100px",
-      timer: [],
+      timer: null,
       form: {
         first_cateid: "",
         second_cateid: "",
@@ -105,6 +105,18 @@ export default {
         endtime: "",
         goodsid: "",
         status: 1,
+      },
+      //规则
+      rules: {
+        first_cateid: [
+          { required: true, message: "请选择上级菜单", trigger: "blur" },
+        ],
+        second_cateid: [
+          { required: true, message: "请选择上级菜单", trigger: "blur" },
+        ],
+        title: [{ required: true, message: "请输入活动名称", trigger: "blur" }],
+        timer: [{ required: true, message: "请选择活动时间", trigger: "blur" }],
+        goodsid: [{ required: true, message: "请选择商品", trigger: "blur" }],
       },
     };
   },
@@ -150,6 +162,27 @@ export default {
     },
     //添加菜单
     add() {
+      // 表单验证
+      if (!this.timer) {
+        warningAlert("请选择开始结束时间");
+        return;
+      }
+      if (!this.form.title) {
+        warningAlert("请输入活动名称");
+        return;
+      }
+      if (this.form.first_cateid == "") {
+        warningAlert("请选择一级分类");
+        return;
+      }
+      if (this.form.second_cateid == "") {
+        warningAlert("请选择二级分类");
+        return;
+      }
+      if (this.form.goodsid == "") {
+        warningAlert("请选择商品");
+        return;
+      }
       this.form.begintime = this.timer[0].getTime();
       this.form.endtime = this.timer[1].getTime();
       reqAddseck(this.form).then((res) => {

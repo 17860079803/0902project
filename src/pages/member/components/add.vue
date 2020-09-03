@@ -1,23 +1,23 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.isShow">
-      <el-form :model="form">
-        <el-form-item label="手机号" :label-width="width">
+      <el-form :model="form" :rules="rules">
+        <el-form-item label="手机号" :label-width="width" prop="phone">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="昵称" :label-width="width">
-            <el-input v-model="form.nickname" autocomplete="off"></el-input>
+        <el-form-item label="昵称" :label-width="width" prop="nickname">
+          <el-input v-model="form.nickname" autocomplete="off"></el-input>
         </el-form-item>
-          <el-form-item label="新密码" :label-width="width">
-            <el-input v-model="form.password" autocomplete="off"></el-input>
+        <el-form-item label="新密码" :label-width="width" prop="password">
+          <el-input v-model="form.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色状态" :label-width="width">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="2"></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="update">修 改</el-button>
+        <el-button @click="cancel" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="update" v-preventReClick>修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -28,10 +28,7 @@ import { mapGetters, mapActions } from "vuex";
 //引入封装好的弹框
 import { successAlert, warningAlert } from "../../../util/alert";
 //引入数据请求
-import {
-  reqmemberDetail,
-  reqmemberUpdate,
-} from "../../../util/requset";
+import { reqmemberDetail, reqmemberUpdate } from "../../../util/requset";
 export default {
   props: ["info"],
   computed: {
@@ -44,9 +41,17 @@ export default {
       width: "100px",
       form: {
         nickname: "",
-        phone: '',
+        phone: "",
         status: 1,
-        password:''
+        password: "",
+      },
+      //规则
+      rules: {
+        nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+        phone: [
+          { required: true, message: "请输入电话", trigger: "blur" },
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
     };
   },
@@ -65,7 +70,7 @@ export default {
         nickname: "",
         phone: [],
         status: 1,
-        password:''
+        password: "",
       };
       //重置树形控件
     },
@@ -73,11 +78,15 @@ export default {
     look(id) {
       reqmemberDetail({ uid: id }).then((res) => {
         this.form = res.data.list;
-        this.form.password = ""
+        this.form.password = "";
       });
     },
     //点击了修改
     update() {
+      if (this.form.password == "") {
+        warningAlert("请填写您要更改的新密码");
+        return;
+      }
       reqmemberUpdate(this.form).then((res) => {
         if (res.data.code == 200) {
           successAlert("修改成功");

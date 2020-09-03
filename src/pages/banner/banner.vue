@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 添加菜单按钮 -->
-    <el-button type="primary" @click="wallAdd">添加</el-button>
+    <el-button type="primary" @click="wallAdd" v-preventReClick>添加</el-button>
     <!-- 加载add组件 -->
     <v-add :info="info" @hide="hide" ref="add"></v-add>
     <!-- 加载list列表数据组件 -->

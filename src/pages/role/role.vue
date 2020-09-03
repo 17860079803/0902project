@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 添加按钮 -->
-    <el-button type="primary" @click="willAdd">添加</el-button>
+    <el-button type="primary" @click="willAdd" v-preventReClick>添加</el-button>
     <!-- 添加弹框组件 -->
     <v-add :info="info" ref="add"></v-add>
     <!-- 列表组件 -->

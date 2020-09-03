@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-dialog :title="info.title" :visible.sync="info.isShow" @closed="close">
-      <el-form :model="form">
+      <el-form :model="form" :rules="rules">
         <!-- 一级分类 -->
-        <el-form-item label="一级分类" :label-width="width">
+        <el-form-item label="一级分类" :label-width="width" prop="first_cateid">
           <el-select v-model="form.first_cateid" placeholder="请选择商品规格" @change="changeFirstId">
             <el-option label="--请选择--" value></el-option>
             <el-option
@@ -15,7 +15,7 @@
           </el-select>
         </el-form-item>
         <!-- 商品属性-->
-        <el-form-item label="二级分类" :label-width="width">
+        <el-form-item label="二级分类" :label-width="width" prop="second_cateid">
           <el-select v-model="form.second_cateid" placeholder="请选择商品规格">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -25,19 +25,19 @@
               :value="item.id"
             ></el-option>
           </el-select>
-        </el-form-item> 
+        </el-form-item>
 
-        <el-form-item label="商品名称" :label-width="width">
+        <el-form-item label="商品名称" :label-width="width" prop="goodsname">
           <el-input v-model="form.goodsname" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="商品价格" :label-width="width">
+        <el-form-item label="商品价格" :label-width="width" prop="price">
           <el-input v-model="form.price" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="市场价格" :label-width="width">
+        <el-form-item label="市场价格" :label-width="width" prop="market_price">
           <el-input v-model="form.market_price" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 图片上传 -->
-        <el-form-item label="图片" :label-width="width" v-if="form.pid!=0">
+        <el-form-item label="图片" :label-width="width" v-if="form.pid!=0" prop="img">
           <div class="upload-box">
             <h3 class="upload-add">+</h3>
             <img class="upload-img" v-if="imgUrl" :src="imgUrl" alt />
@@ -45,7 +45,7 @@
           </div>
         </el-form-item>
         <!-- 商品规格 -->
-        <el-form-item label="商品规格" :label-width="width">
+        <el-form-item label="商品规格" :label-width="width" prop="specsid">
           <el-select v-model="form.specsid" placeholder="请选择商品规格" @change="changeSpecId">
             <el-option label="--请选择--" value disabled></el-option>
             <el-option
@@ -57,7 +57,7 @@
           </el-select>
         </el-form-item>
         <!-- 商品属性 -->
-        <el-form-item label="商品属性" :label-width="width">
+        <el-form-item label="商品属性" :label-width="width" prop="specsattr">
           <el-select v-model="form.specsattr" placeholder="请选择商品规格属性">
             <el-option label="--请选择--" value></el-option>
             <el-option v-for="item in attrList" :key="item" :label="item" :value="item"></el-option>
@@ -76,16 +76,16 @@
         <el-form-item label="状态" :label-width="width">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="2"></el-switch>
         </el-form-item>
-        <el-form-item label="商品描述" :label-width="width">
+        <el-form-item label="商品描述" :label-width="width" prop="description">
           <!-- 富文本编辑器的节点 -->
           <!-- <div id="editor" v-if="info.isShow"></div> -->
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" @click="update" v-else>修 改</el-button>
+        <el-button @click="cancel" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="add" v-if="info.isAdd" v-preventReClick>添 加</el-button>
+        <el-button type="primary" @click="update" v-else v-preventReClick>修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -137,6 +137,28 @@ export default {
         isnew: 1,
         ishot: 1,
         status: 1,
+      },
+      //规则
+      rules: {
+        first_cateid: [
+          { required: true, message: "请输入商品名称", trigger: "blur" },
+        ],
+        second_cateid: [
+          { required: true, message: "请输入商品名称", trigger: "blur" },
+        ],
+        goodsname: [
+          { required: true, message: "请输入商品名称", trigger: "blur" },
+        ],
+        img: [{ required: true, message: "请上传图片", trigger: "blur" }],
+        price: [{ required: true, message: "请输入价格", trigger: "blur" }],
+        market_price: [
+          { required: true, message: "请输入市场价格", trigger: "blur" },
+        ],
+        description: [
+          { required: true, message: "请输入描述", trigger: "blur" },
+        ],
+        specsid: [{ required: true, message: "请输入描述", trigger: "blur" }],
+        specsattr: [{ required: true, message: "请输入描述", trigger: "blur" }],
       },
     };
   },
@@ -206,6 +228,26 @@ export default {
     },
     //添加菜单
     add() {
+      // 表单验证
+      if (
+        !this.form.goodsname &&
+        !this.form.img &&
+        !this.price &&
+        !this.market_price &&
+        !this.description
+      ) {
+        warningAlert("请填写必填项,*为必填项");
+        return;
+      }
+      if (
+        this.form.first_cateid == "" &&
+        this.form.second_cateid == "" &&
+        this.form.specsid == "" &&
+        this.form.specsattr == []
+      ) {
+        warningAlert("请填写必填项,*为必填项");
+        return;
+      }
       reqgoodsAdd(this.form).then((res) => {
         if (res.data.code === 200) {
           //添加成功
@@ -216,7 +258,7 @@ export default {
           this.empty();
           //重置list
           this.reqList();
-          this.reqtotal()
+          this.reqtotal();
         } else {
           warningAlert(res.data.msg);
         }
@@ -281,7 +323,7 @@ export default {
     //如果没有分类就请求
     if (this.cateList.length == 0) {
       this.reqCateList();
-    } 
+    }
     //请求全部的规格
     this.reqSpecList(true);
   },

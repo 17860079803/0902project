@@ -11,7 +11,7 @@
         </el-form-item>
       </el-form>
       <div class="btn-box">
-        <el-button type="primary" @click="login">登录</el-button>
+        <el-button type="primary" @click="login" v-preventReClick>登录</el-button>
       </div>
     </div>
   </div>

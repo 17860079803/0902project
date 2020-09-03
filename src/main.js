@@ -27,8 +27,11 @@ for (let i in Filters) {
 // 6.处理element-ui 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
+//\7.处理图片前缀
 Vue.prototype.$preImg="http://localhost:3000"
+// 8.vue按钮连点
+import plugins from '@/util/plugins'
+Vue.use(plugins)
 Vue.use(ElementUI)
 new Vue({
   el: '#app',

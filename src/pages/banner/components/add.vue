@@ -7,11 +7,11 @@
       @opened="showFile=true"
     >
       <el-form :model="form" :rules="rules">
-        <el-form-item label="标题" :label-width="width">
+        <el-form-item label="标题" :label-width="width" prop="title">
           <el-input v-model="form.title" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 图片上传 -->
-        <el-form-item label="图片" :label-width="width">
+        <el-form-item label="图片" :label-width="width" prop="img">
           <div class="upload-box">
             <h3 class="upload-add">+</h3>
             <img class="upload-img" v-if="imgUrl" :src="imgUrl" alt />
@@ -24,9 +24,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="add" v-if="info.isAdd">添 加</el-button>
-        <el-button type="primary" @click="update" v-else>修 改</el-button>
+        <el-button @click="cancel" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="add" v-if="info.isAdd" v-preventReClick>添 加</el-button>
+        <el-button type="primary" @click="update" v-else v-preventReClick>修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -61,16 +61,8 @@ export default {
       },
       //规则
       rules: {
-        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          {
-            min: 6,
-            max: 24,
-            message: "长度在 6 到 24 个字符",
-            trigger: "blur",
-          },
-        ],
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+        img: [{ required: true, message: "请上传图片", trigger: "blur" }],
       },
     };
   },
@@ -79,6 +71,7 @@ export default {
     ...mapActions({
       reqList: "banner/reqListAction",
     }),
+    //上传图片
     selectImg(e) {
       let file = e.target.files[0];
 
@@ -119,6 +112,11 @@ export default {
     },
     //添加菜单
     add() {
+      // 表单验证
+      if(!this.form.title&&!this.form.img){
+        warningAlert("请输入轮播图片名,和上传图片")
+        return;
+      }
       reqAddbanner(this.form).then((res) => {
         if (res.data.code === 200) {
           //添加成功
